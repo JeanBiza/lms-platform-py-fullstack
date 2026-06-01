@@ -11,6 +11,8 @@ from app.models.quiz_attempt import QuizAttempt
 from app.models.quiz_answer import QuizAnswer
 from app.models.quiz import Quiz
 from config import Config
+from app.routes.auth import auth_bp
+
 
 def create_app():
     app = Flask(__name__)
@@ -21,4 +23,11 @@ def create_app():
     login_manager.init_app(app)
 
     from app import models
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        from app.models.user import User
+        return User.query.get(int(user_id))
+    
+    app.register_blueprint(auth_bp)
     return app
