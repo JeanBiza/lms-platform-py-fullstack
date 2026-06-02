@@ -12,6 +12,7 @@ from app.models.quiz_answer import QuizAnswer
 from app.models.quiz import Quiz
 from config import Config
 from app.routes.auth import auth_bp
+from app.routes.dashboard import dashboard_bp
 
 
 def create_app():
@@ -30,4 +31,5 @@ def create_app():
         return User.query.get(int(user_id))
     
     app.register_blueprint(auth_bp)
+    app.register_blueprint(dashboard_bp)
     return app
