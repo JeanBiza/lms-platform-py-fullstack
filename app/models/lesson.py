@@ -12,7 +12,7 @@ class Lesson(db.Model):
     type = db.Column(db.String(256), nullable=False)
     content = db.Column(db.String(500), nullable=False) 
 
-    lesson_progress = db.relationship("LessonProgress", back_populates="lesson")
+    lesson_progress = db.relationship("LessonProgress", back_populates="lesson", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<Lesson {self.title}>"

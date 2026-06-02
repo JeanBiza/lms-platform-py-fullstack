@@ -1,18 +1,19 @@
 from flask import Flask
 from app.extensions import db, migrate, login_manager
+from config import Config
 from app.models.user import User
-from app.models.option import Option
 from app.models.course import Course
-from app.models.enrollment import Enrollment
 from app.models.lesson import Lesson
-from app.models.lesson_progress import LessonProgress
+from app.models.quiz import Quiz
 from app.models.question import Question
+from app.models.option import Option
+from app.models.enrollment import Enrollment
+from app.models.lesson_progress import LessonProgress
 from app.models.quiz_attempt import QuizAttempt
 from app.models.quiz_answer import QuizAnswer
-from app.models.quiz import Quiz
-from config import Config
 from app.routes.auth import auth_bp
 from app.routes.dashboard import dashboard_bp
+from app.routes.courses import courses_bp
 
 
 def create_app():
@@ -32,4 +33,5 @@ def create_app():
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
+    app.register_blueprint(courses_bp, url_prefix="/courses")
     return app

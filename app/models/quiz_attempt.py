@@ -14,8 +14,7 @@ class QuizAttempt(db.Model):
     passed = db.Column(db.Boolean, nullable=False)
     attempted_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
-    quiz_answers = db.relationship("QuizAnswer", back_populates="attempt")
-
+    quiz_answers = db.relationship("QuizAnswer", back_populates="attempt", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<Quiz Attempt {self.id}>"

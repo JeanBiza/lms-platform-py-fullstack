@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Courses — LMS Platform{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Courses</h2>
+    <a href="{{ url_for('courses.courses') }}" class="btn btn-primary">+ New Course</a>
+</div>
+
+{% if courses %}
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for course in courses %}
+        <tr>
+            <td>{{ course.title }}</td>
+            <td>{{ course.category }}</td>
+            <td>
+                {% if course.is_active %}
+                    <span class="badge bg-success">Active</span>
+                {% else %}
+                    <span class="badge bg-secondary">Inactive</span>
+                {% endif %}
+            </td>
+            <td>
+                <a href="{{ url_for('courses.get_course', id=course.id) }}" class="btn btn-sm btn-outline-secondary">View</a>
+                <a href="{{ url_for('courses.edit_course', id=course.id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+                <form method="POST" action="{{ url_for('courses.delete_course', id=course.id) }}"
+                    id="delete-form-{{ course.id }}" class="d-inline">
+                    <button type="button" class="btn btn-sm btn-outline-danger"
+                        onclick="confirmAction('delete-form-{{ course.id }}', 'Delete course \'{{ course.title }}\'? This cannot be undone.')">
+                        Delete
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p class="text-muted">No courses yet. <a href="{{ url_for('courses.courses') }}">Create the first one</a>.</p>
+{% endif %}
+{% endblock %}

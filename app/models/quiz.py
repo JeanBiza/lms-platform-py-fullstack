@@ -8,8 +8,9 @@ class Quiz(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey("courses.id"), nullable=False)
     passing_score = db.Column(db.Integer, nullable=False)
 
-    questions = db.relationship("Question", back_populates="quiz")
-    quiz_attempts = db.relationship("QuizAttempt", back_populates="quiz")
+    questions = db.relationship("Question", back_populates="quiz", cascade="all, delete-orphan")
+    quiz_attempts = db.relationship("QuizAttempt", back_populates="quiz", cascade="all, delete-orphan")
+
 
     def __repr__(self):
         return f"<Quiz {self.id}>"

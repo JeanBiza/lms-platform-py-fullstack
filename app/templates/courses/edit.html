@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Course — LMS Platform{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2 class="mb-4">Edit Course</h2>
+        <form method="POST" action="{{ url_for('courses.edit_course', id=course.id) }}">
+            <div class="mb-3">
+                <label class="form-label">Title</label>
+                <input type="text" class="form-control" name="title" value="{{ course.title }}" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea class="form-control" name="description" rows="4" required>{{ course.description }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Category</label>
+                <input type="text" class="form-control" name="category" value="{{ course.category }}" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Thumbnail URL</label>
+                <input type="url" class="form-control" name="thumbnail_url" value="{{ course.thumbnail_url }}" required>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" name="is_active" id="is_active"
+                    {% if course.is_active %}checked{% endif %}>
+                <label class="form-check-label" for="is_active">Active</label>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a href="{{ url_for('courses.get_all_courses') }}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

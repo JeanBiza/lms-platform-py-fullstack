@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}New Course — LMS Platform{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2 class="mb-4">New Course</h2>
+        <form method="POST" action="{{ url_for('courses.courses') }}">
+            <div class="mb-3">
+                <label class="form-label">Title</label>
+                <input type="text" class="form-control" name="title" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea class="form-control" name="description" rows="4" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Category</label>
+                <input type="text" class="form-control" name="category" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Thumbnail URL</label>
+                <input type="url" class="form-control" name="thumbnail_url" required>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Create Course</button>
+                <a href="{{ url_for('courses.get_all_courses') }}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

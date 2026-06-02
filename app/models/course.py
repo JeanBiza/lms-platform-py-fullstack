@@ -12,11 +12,10 @@ class Course(db.Model):
     thumbnail_url = db.Column(db.String(500), nullable=False) 
     is_active = db.Column(db.Boolean, default=True, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-
-    lessons = db.relationship("Lesson", back_populates="course")
-    quiz = db.relationship("Quiz", back_populates="course", uselist=False)
-
-    enrollments = db.relationship("Enrollment", back_populates="course")
+    
+    lessons = db.relationship("Lesson", back_populates="course", cascade="all, delete-orphan")
+    quiz = db.relationship("Quiz", back_populates="course", uselist=False, cascade="all, delete-orphan")
+    enrollments = db.relationship("Enrollment", back_populates="course", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<Course {self.title}>"

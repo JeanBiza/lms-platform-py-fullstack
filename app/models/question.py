@@ -10,8 +10,9 @@ class Question(db.Model):
     text = db.Column(db.Text , nullable=False)
     order = db.Column(db.Integer, nullable=False)
     
-    options = db.relationship("Option", back_populates="question")
-    quiz_answers = db.relationship("QuizAnswer", back_populates="question")
+    options = db.relationship("Option", back_populates="question", cascade="all, delete-orphan")
+    quiz_answers = db.relationship("QuizAnswer", back_populates="question", cascade="all, delete-orphan")
+
 
     def __repr__(self):
         return f"<Question {self.text}>"
