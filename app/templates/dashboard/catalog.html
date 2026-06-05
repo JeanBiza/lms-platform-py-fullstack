@@ -1,0 +1,39 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">Available Courses Catalog</h2>
+    
+    <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
+        {% for course in courses %}
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <img src="{{ course.thumbnail_url }}" class="card-img-top" alt="{{ course.title }} Thumbnail" style="height: 200px; object-fit: cover;">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title text-primary">{{ course.title }}</h5>
+                        <p class="card-text text-muted flex-grow-1">{{ course.description }}</p>
+                        
+                        {% if course.id in enrolled_course_ids %}
+                            <div class="mt-3">
+                                <a href="{{ url_for('employee.my_progress') }}" class="btn btn-outline-success w-100">
+                                    Go to Course
+                                </a>
+                            </div>
+                        {% else %}
+                            <form action="{{ url_for('employee.enroll', course_id=course.id) }}" method="POST" class="mt-3">
+                                <button type="submit" class="btn btn-primary w-100">Enroll Now</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        
+        {% if not courses %}
+            <div class="col-12">
+                <div class="alert alert-info text-center" role="alert">
+                    There are no active courses available at this time.
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
