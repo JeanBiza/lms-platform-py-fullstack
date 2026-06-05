@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Lesson — LMS Platform{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2 class="mb-1">Edit Lesson</h2>
+        <p class="text-muted mb-4">Course: {{ course.title }}</p>
+
+        <form method="POST" action="{{ url_for('lessons.edit_lesson', course_id=course.id, id=lesson.id) }}">
+            <div class="mb-3">
+                <label class="form-label">Title</label>
+                <input type="text" class="form-control" name="title" value="{{ lesson.title }}" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Order</label>
+                <input type="number" class="form-control" name="order" value="{{ lesson.order }}" min="1" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Type</label>
+                <select class="form-select" name="type" required>
+                    <option value="video" {% if lesson.type == "video" %}selected{% endif %}>Video</option>
+                    <option value="pdf" {% if lesson.type == "pdf" %}selected{% endif %}>PDF</option>
+                    <option value="text" {% if lesson.type == "text" %}selected{% endif %}>Text</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Content</label>
+                <textarea class="form-control" name="content" rows="4" required>{{ lesson.content }}</textarea>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a href="{{ url_for('courses.get_course', id=course.id) }}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

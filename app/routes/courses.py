@@ -44,7 +44,7 @@ def get_course(id):
     course = db.session.get(Course, id)
     if course is None:
         abort(404)
-    return render_template("courses/detail.html", course=course)
+    return render_template("dashboard/course_detail.html", course=course)
 
 
 @courses_bp.route("/<int:id>/edit", methods=["GET", "POST"])
@@ -67,10 +67,12 @@ def edit_course(id):
             flash("All fields are required. ","danger")
             return redirect(url_for("courses.edit_course", id=id))
         
+
         course.title = title
         course.description = description
         course.category = category
         course.thumbnail_url = thumbnail_url
+        course.is_active = "is_active" in request.form
         db.session.commit()
 
         return redirect(url_for("courses.get_all_courses"))

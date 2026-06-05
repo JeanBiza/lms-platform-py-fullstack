@@ -14,6 +14,7 @@ from app.models.quiz_answer import QuizAnswer
 from app.routes.auth import auth_bp
 from app.routes.dashboard import dashboard_bp
 from app.routes.courses import courses_bp
+from app.routes.lessons import lessons_bp
 
 
 def create_app():
@@ -34,4 +35,5 @@ def create_app():
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(courses_bp, url_prefix="/courses")
+    app.register_blueprint(lessons_bp, url_prefix="/courses")
     return app

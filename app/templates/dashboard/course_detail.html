@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}{{ course.title }} — LMS Platform{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h2>{{ course.title }}</h2>
+        <p class="text-muted">{{ course.description }}</p>
+        <span class="badge bg-secondary">{{ course.category }}</span>
+        {% if course.is_active %}
+            <span class="badge bg-success">Active</span>
+        {% else %}
+            <span class="badge bg-danger">Inactive</span>
+        {% endif %}
+    </div>
+    {% if current_user.role == "admin" %}
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('courses.edit_course', id=course.id) }}" class="btn btn-outline-primary btn-sm">Edit Course</a>
+        <a href="{{ url_for('lessons.new_lesson', course_id=course.id) }}" class="btn btn-primary btn-sm">+ Add Lesson</a>
+    </div>
+    {% endif %}
+</div>
+
+<h5 class="mb-3">Lessons</h5>
+
+{% if course.lessons %}
+<div class="list-group">
+    {% for lesson in course.lessons | sort(attribute='order') %}
+    <div class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+            <span class="text-muted me-2">#{{ lesson.order }}</span>
+            <strong>{{ lesson.title }}</strong>
+            <span class="badge bg-light text-dark ms-2">{{ lesson.type }}</span>
+        </div>
+        {% if current_user.role == "admin" %}
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('lessons.edit_lesson', course_id=course.id, id=lesson.id) }}"
+               class="btn btn-sm btn-outline-primary">Edit</a>
+            <form method="POST"
+                  action="{{ url_for('lessons.delete_lesson', course_id=course.id, id=lesson.id) }}"
+                  id="delete-lesson-{{ lesson.id }}" class="d-inline">
+                <button type="button" class="btn btn-sm btn-outline-danger"
+                    onclick="confirmAction('delete-lesson-{{ lesson.id }}', 'Delete lesson \'{{ lesson.title }}\'?')">
+                    Delete
+                </button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="text-muted">No lessons yet. <a href="{{ url_for('lessons.new_lesson', course_id=course.id) }}">Add the first one</a>.</p>
+{% endif %}
+{% endblock %}
