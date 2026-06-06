@@ -33,7 +33,7 @@
             <strong>{{ lesson.title }}</strong>
             <span class="badge bg-light text-dark ms-2">{{ lesson.type }}</span>
         </div>
-        {% if current_user.role == "admin" %}
+       {% if current_user.role == "admin" %}
         <div class="d-flex gap-2">
             <a href="{{ url_for('lessons.edit_lesson', course_id=course.id, id=lesson.id) }}"
                class="btn btn-sm btn-outline-primary">Edit</a>
@@ -45,12 +45,19 @@
                     Delete
                 </button>
             </form>
-        </div>
+        </div> 
+        {% else %}
+        <a href="{{ url_for('employee.view_lesson', lesson_id=lesson.id) }}" 
+           class="btn btn-sm btn-primary">View</a>
         {% endif %}
     </div>
     {% endfor %}
 </div>
 {% else %}
-<p class="text-muted">No lessons yet. <a href="{{ url_for('lessons.new_lesson', course_id=course.id) }}">Add the first one</a>.</p>
+    {% if current_user.role == "admin" %}
+    <p class="text-muted">No lessons yet. <a href="{{ url_for('lessons.new_lesson', course_id=course.id) }}">Add the first one</a>.</p>
+    {% else %}
+    <p class="text-muted">No lessons available for this course yet.</p>
+    {% endif %}
 {% endif %}
 {% endblock %}
