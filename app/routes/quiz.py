@@ -5,6 +5,8 @@ from app.models.quiz import Quiz
 from app.models.course import Course
 from app.models.question import Question
 from app.models.option import Option
+from app.models.quiz_answer import QuizAnswer
+from app.models.quiz_attempt import QuizAttempt
 
 quiz_bp = Blueprint("quiz", __name__)
 
@@ -71,3 +73,58 @@ def new_question(course_id, quiz_id):
 
     return render_template("quiz/new_question.html", course=course, quiz=quiz)
 
+@quiz_bp.route("/<int:course_id>/quiz/take", methods=["GET", "POST"])
+@login_required
+def take_quiz(course_id):
+    course = db.session.get(Course, course_id)
+    if course is None:
+        abort(404)
+
+    quiz = Quiz.query.filter_by(course_id=course_id).first()
+    if quiz is None:
+        abort(404)
+
+    if request.method == "POST":
+
+        quiz_attempt = QuizAttempt(user_id=current_user.id, quiz_id=quiz.id, score=0, passed=False)
+        db.session.add(quiz_attempt)
+        db.session.flush()
+
+        correct = 0
+        for question in quiz.questions:
+            option_id = request.form.get(f"question_{question.id}")
+            quiz_answer = QuizAnswer(attempt_id=quiz_attempt.id, question_id=question.id, option_id=option_id)
+            db.session.add(quiz_answer)
+            if option_id:
+                option = db.session.get(Option, int(option_id))
+                if option and option.is_correct:
+                    correct += 1
+
+        score = round(correct / len(quiz.questions) * 100)
+        passed = score >= quiz.passing_score
+
+        quiz_attempt.score = score
+        quiz_attempt.passed = passed
+        db.session.commit()
+
+
+        return redirect(url_for("quiz.results", course_id=course_id, user_id=current_user.id))
+
+    return render_template("quiz/quiz.html", course=course, quiz=quiz)
+
+
+@quiz_bp.route("/<int:course_id>/quiz/results", methods=["GET"])
+@login_required
+def results(course_id):
+    quiz = Quiz.query.filter_by(course_id=course_id).first()
+    if quiz is None:
+        abort(404)
+
+    attempt = QuizAttempt.query.filter_by(
+        user_id=current_user.id, quiz_id=quiz.id
+    ).order_by(QuizAttempt.attempted_at.desc()).first()
+
+    if attempt is None:
+        abort(404)
+
+    return render_template("quiz/results.html", quiz=quiz, attempt=attempt)

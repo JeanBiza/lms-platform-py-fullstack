@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz Results — LMS Platform{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7">
+
+        <h2 class="mb-4">Quiz Results</h2>
+
+        <div class="text-center mb-5">
+            <div class="d-inline-flex align-items-center justify-content-center rounded-circle border border-4 mb-3
+                {% if attempt.passed %}border-success{% else %}border-danger{% endif %}"
+                style="width: 140px; height: 140px;">
+                <div>
+                    <div class="fs-1 fw-bold
+                        {% if attempt.passed %}text-success{% else %}text-danger{% endif %}">
+                        {{ attempt.score }}%
+                    </div>
+                </div>
+            </div>
+            <div>
+                {% if attempt.passed %}
+                    <span class="badge bg-success fs-6">Passed ✓</span>
+                {% else %}
+                    <span class="badge bg-danger fs-6">Failed ✗</span>
+                {% endif %}
+                <p class="text-muted mt-2 mb-0">Passing score: {{ quiz.passing_score }}%</p>
+            </div>
+        </div>
+
+        <h5 class="mb-3">Review</h5>
+        <div class="d-flex flex-column gap-3">
+            {% for answer in attempt.quiz_answers | sort(attribute='question.order') %}
+                {% set correct_option = answer.question.options | selectattr('is_correct') | first %}
+                {% set is_correct = answer.option_id == correct_option.id %}
+
+                <div class="card border
+                    {% if is_correct %}border-success{% else %}border-danger{% endif %}">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <p class="fw-semibold mb-0">{{ loop.index }}. {{ answer.question.text }}</p>
+                            {% if is_correct %}
+                                <span class="badge bg-success ms-2">✓</span>
+                            {% else %}
+                                <span class="badge bg-danger ms-2">✗</span>
+                            {% endif %}
+                        </div>
+
+                        <ul class="list-unstyled mb-0">
+                            {% for option in answer.question.options %}
+                            <li class="py-1 px-2 rounded mb-1
+                                {% if option.is_correct %}bg-success bg-opacity-10 text-success fw-semibold
+                                {% elif option.id == answer.option_id and not option.is_correct %}bg-danger bg-opacity-10 text-danger
+                                {% endif %}">
+                                {% if option.is_correct %}✓ {% elif option.id == answer.option_id %}✗ {% endif %}
+                                {{ option.text }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+
+                        {% if not is_correct %}
+                        <small class="text-muted mt-2 d-block">
+                            Correct answer: <strong class="text-success">{{ correct_option.text }}</strong>
+                        </small>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="d-flex gap-2 mt-4">
+            <a href="{{ url_for('courses.get_course', id=quiz.course_id) }}"
+               class="btn btn-outline-secondary">Back to Course</a>
+            <a href="{{ url_for('quiz.take_quiz', course_id=quiz.course_id) }}"
+               class="btn btn-outline-primary">Try Again</a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
