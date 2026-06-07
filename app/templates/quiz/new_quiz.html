@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}New Quiz — LMS Platform{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <h2 class="mb-1">Create Quiz</h2>
+        <p class="text-muted mb-4">Course: {{ course.title }}</p>
+
+        <form method="POST" action="{{ url_for('quiz.new_quiz', course_id=course.id) }}">
+            <div class="mb-3">
+                <label class="form-label">Passing Score (%)</label>
+                <input type="number" class="form-control" name="passing_score"
+                       value="70" min="1" max="100" required>
+                <div class="form-text">Minimum score required to pass the quiz.</div>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Create Quiz</button>
+                <a href="{{ url_for('courses.get_course', id=course.id) }}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

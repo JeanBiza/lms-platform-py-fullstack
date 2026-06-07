@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Add Question — LMS Platform{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2 class="mb-1">Add Question</h2>
+        <p class="text-muted mb-4">Course: {{ course.title }}</p>
+
+        {% if quiz.questions %}
+        <div class="alert alert-light border mb-4">
+            <small class="text-muted">Questions added so far: {{ quiz.questions | length }}</small>
+            <ul class="mb-0 mt-1">
+                {% for q in quiz.questions | sort(attribute='order') %}
+                <li class="small">{{ q.order }}. {{ q.text }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('quiz.new_question', course_id=course.id, quiz_id=quiz.id) }}">
+            <div class="mb-3">
+                <label class="form-label">Question</label>
+                <textarea class="form-control" name="text" rows="2" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Order</label>
+                <input type="number" class="form-control" name="order"
+                       value="{{ quiz.questions | length + 1 }}" min="1" required>
+            </div>
+
+            <hr class="my-3">
+            <p class="fw-semibold mb-3">Options — mark the correct one</p>
+
+            <div class="mb-3">
+                <label class="form-label">Correct Answer</label>
+                <input type="text" class="form-control border-success" name="correct_option" required
+                       placeholder="Write the correct answer">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Wrong Option 1</label>
+                <input type="text" class="form-control" name="option_1" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Wrong Option 2</label>
+                <input type="text" class="form-control" name="option_2" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Wrong Option 3</label>
+                <input type="text" class="form-control" name="option_3" required>
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary">Add Question</button>
+                <a href="{{ url_for('courses.get_course', id=course.id) }}"
+                   class="btn btn-outline-secondary">Done</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
