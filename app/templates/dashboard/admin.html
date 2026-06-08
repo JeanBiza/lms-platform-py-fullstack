@@ -1,5 +1,113 @@
 {% extends "base.html" %}
+
+{% block title %}Admin Dashboard — LMS Platform{% endblock %}
+
 {% block content %}
-<h2>Welcome, {{ current_user.name }}</h2>
-<p>Role: {{ current_user.role }}</p>
+<div class="mb-4">
+    <h2>Admin Dashboard</h2>
+    <p class="text-muted">Welcome back, {{ current_user.name }}</p>
+</div>
+
+<div class="row g-3 mb-5">
+    <div class="col-md-4">
+        <div class="card text-center shadow-sm">
+            <div class="card-body py-4">
+                <div class="fs-1 fw-bold text-primary">{{ total_users }}</div>
+                <div class="text-muted">Employees</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center shadow-sm">
+            <div class="card-body py-4">
+                <div class="fs-1 fw-bold text-success">{{ total_courses }}</div>
+                <div class="text-muted">Active Courses</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center shadow-sm">
+            <div class="card-body py-4">
+                <div class="fs-1 fw-bold text-warning">{{ total_inscriptions }}</div>
+                <div class="text-muted">Total Enrollments</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+
+    <div class="col-md-8">
+        <h5 class="mb-3">Employee Progress</h5>
+        {% if employee_data %}
+        <div class="card shadow-sm">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Employee</th>
+                        <th>Department</th>
+                        <th>Enrolled</th>
+                        <th>Completed</th>
+                        <th>Rate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in employee_data %}
+                    <tr>
+                        <td>{{ item.user.name }}</td>
+                        <td class="text-muted">{{ item.user.department or '—' }}</td>
+                        <td>{{ item.enrolled }}</td>
+                        <td>{{ item.completed }}</td>
+                        <td>
+                            {% if item.enrolled > 0 %}
+                                {% set rate = (item.completed / item.enrolled * 100) | round | int %}
+                                <div class="progress" style="height: 6px; width: 80px;">
+                                    <div class="progress-bar bg-success" style="width: {{ rate }}%"></div>
+                                </div>
+                                <small class="text-muted">{{ rate }}%</small>
+                            {% else %}
+                                <small class="text-muted">—</small>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted">No employees registered yet.</p>
+        {% endif %}
+    </div>
+
+    <div class="col-md-4">
+        <h5 class="mb-3">Recent Enrollments</h5>
+        {% if recent_enrollments %}
+        <div class="card shadow-sm">
+            <ul class="list-group list-group-flush">
+                {% for enrollment in recent_enrollments %}
+                <li class="list-group-item">
+                    <div class="fw-semibold small">{{ enrollment.user.name }}</div>
+                    <div class="text-muted small">{{ enrollment.course.title }}</div>
+                    <div class="text-muted" style="font-size: 11px;">
+                        {{ enrollment.enrolled_at.strftime('%b %d, %Y') }}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% else %}
+        <p class="text-muted">No enrollments yet.</p>
+        {% endif %}
+    </div>
+
+</div>
+
+<div class="mt-5">
+    <h5 class="mb-3">Quick Actions</h5>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('courses.get_all_courses') }}" class="btn btn-outline-primary">Manage Courses</a>
+        <a href="{{ url_for('auth.register') }}" class="btn btn-outline-secondary">Add Employee</a>
+    </div>
+</div>
+
 {% endblock %}
