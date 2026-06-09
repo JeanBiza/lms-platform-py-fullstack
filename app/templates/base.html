@@ -8,9 +8,21 @@
 </head>
 <body>
     <nav class="navbar navbar-dark bg-dark px-4">
-        <a class="navbar-brand" href="/">LMS Platform</a>
+        <a class="navbar-brand" href="{{ url_for('dashboard.index') }}">LMS Platform</a>
+
         {% if current_user.is_authenticated %}
         <div class="d-flex align-items-center gap-3">
+
+            {% if current_user.role == "admin" %}
+                <a href="{{ url_for('dashboard.index_admin') }}" class="nav-link text-white-50">Dashboard</a>
+                <a href="{{ url_for('courses.get_all_courses') }}" class="nav-link text-white-50">Courses</a>
+                <a href="{{ url_for('dashboard.index_admin') }}" class="nav-link text-white-50">Users</a>
+            {% else %}
+                <a href="{{ url_for('dashboard.index') }}" class="nav-link text-white-50">Dashboard</a>
+                <a href="{{ url_for('employee.catalog') }}" class="nav-link text-white-50">Catalog</a>
+                <a href="{{ url_for('employee.my_progress') }}" class="nav-link text-white-50">My Progress</a>
+            {% endif %}
+
             <span class="text-white-50">{{ current_user.name }}</span>
             <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-light btn-sm">Logout</a>
         </div>
