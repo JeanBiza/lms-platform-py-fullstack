@@ -16,7 +16,7 @@
             {% if current_user.role == "admin" %}
                 <a href="{{ url_for('dashboard.index_admin') }}" class="nav-link text-white-50">Dashboard</a>
                 <a href="{{ url_for('courses.get_all_courses') }}" class="nav-link text-white-50">Courses</a>
-                <a href="{{ url_for('dashboard.index_admin') }}" class="nav-link text-white-50">Users</a>
+                <a href="{{ url_for('admin.get_users') }}" class="nav-link text-white-50">Users</a>
             {% else %}
                 <a href="{{ url_for('dashboard.index') }}" class="nav-link text-white-50">Dashboard</a>
                 <a href="{{ url_for('employee.catalog') }}" class="nav-link text-white-50">Catalog</a>
@@ -66,16 +66,22 @@
     <script>
         let pendingForm = null;
 
-        function confirmAction(formId, message) {
+        function confirmAction(formId, message, btnText = 'Delete', btnClass = 'btn-danger') {
             pendingForm = document.getElementById(formId);
             if (message) {
                 document.getElementById("confirmMessage").textContent = message;
             }
+            const btn = document.getElementById("confirmBtn");
+            btn.textContent = btnText;
+            btn.setAttribute('data-btn-class', btnClass);
+            btn.className = 'btn ' + btnClass;
             new bootstrap.Modal(document.getElementById("confirmModal")).show();
         }
 
         document.getElementById("confirmBtn").addEventListener("click", function () {
-            if (pendingForm) pendingForm.submit();
+            if (pendingForm) {
+                pendingForm.submit();
+            }
         });
     </script>
 </body>

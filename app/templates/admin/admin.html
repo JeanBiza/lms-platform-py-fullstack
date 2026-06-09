@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Users — LMS Platform{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Users</h2>
+    <a href="{{ url_for('admin.new_user') }}" class="btn btn-primary">+ New User</a>
+</div>
+
+{% if employees %}
+<div class="card shadow-sm">
+    <table class="table table-hover mb-0">
+        <thead class="table-light">
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in employees %}
+            <tr>
+                <td>{{ user.name }}</td>
+                <td class="text-muted">{{ user.email }}</td>
+                <td class="text-muted">{{ user.department or '—' }}</td>
+                <td>
+                    <span class="badge {% if user.role == 'admin' %}bg-dark{% else %}bg-secondary{% endif %}">
+                        {{ user.role | title }}
+                    </span>
+                </td>
+                <td>
+                    <span class="badge {% if user.active %}bg-success{% else %}bg-danger{% endif %}">
+                        {% if user.active %}Active{% else %}Inactive{% endif %}
+                    </span>
+                </td>
+                <td>
+                    <div class="d-flex gap-2">
+                        {% if user.id != current_user.id %}
+                        <form method="POST"
+                              action="{{ url_for('admin.toggle_role', id=user.id) }}"
+                              id="role-form-{{ user.id }}" class="d-inline">
+                            <button type="button" class="btn btn-sm btn-outline-secondary"
+                                onclick="confirmAction('role-form-{{ user.id }}',
+                                'Change {{ user.name }} role to {{ 'employee' if user.role == 'admin' else 'admin' }}?',
+                                'Confirm',
+                                'btn-secondary')">
+                                {% if user.role == "admin" %}Make Employee{% else %}Make Admin{% endif %}
+                            </button>
+                        </form>
+
+                        {% if user.role != "admin" %}
+                        <form method="POST"
+                              action="{{ url_for('admin.delete_user', id=user.id) }}"
+                              id="delete-user-{{ user.id }}" class="d-inline">
+                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                onclick="confirmAction('delete-user-{{ user.id }}',
+                                'Delete user {{ user.name }}? This cannot be undone.')">
+                                Delete
+                            </button>
+                        </form>
+                        {% endif %}
+
+                        {% else %}
+                        <span class="text-muted small">You</span>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<p class="text-muted">No users found.</p>
+{% endif %}
+{% endblock %}

@@ -17,7 +17,7 @@ from app.routes.courses import courses_bp
 from app.routes.lessons import lessons_bp
 from app.routes.employee import employee_bp
 from app.routes.quiz import quiz_bp
-
+from app.routes.admin import admin_bp
 
 def create_app():
     app = Flask(__name__)
@@ -40,4 +40,5 @@ def create_app():
     app.register_blueprint(lessons_bp, url_prefix="/courses")
     app.register_blueprint(employee_bp)
     app.register_blueprint(quiz_bp, url_prefix="/courses")
+    app.register_blueprint(admin_bp)
     return app
