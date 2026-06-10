@@ -74,6 +74,8 @@
                class="btn btn-outline-secondary">Back to Course</a>
             <a href="{{ url_for('quiz.take_quiz', course_id=quiz.course_id) }}"
                class="btn btn-outline-primary">Try Again</a>
+            <a href="{{ url_for('quiz.quiz_history', course_id=quiz.course_id) }}"
+                class="btn btn-outline-secondary">View History</a>
         </div>
 
     </div>

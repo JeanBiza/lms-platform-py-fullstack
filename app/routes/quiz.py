@@ -7,6 +7,8 @@ from app.models.question import Question
 from app.models.option import Option
 from app.models.quiz_answer import QuizAnswer
 from app.models.quiz_attempt import QuizAttempt
+from app.models.lesson import Lesson
+from app.models.lesson_progress import LessonProgress
 
 quiz_bp = Blueprint("quiz", __name__)
 
@@ -84,6 +86,16 @@ def take_quiz(course_id):
     if quiz is None:
         abort(404)
 
+    total_lessons = len(course.lessons)
+    completed_lessons = LessonProgress.query.filter_by(
+        user_id=current_user.id
+    ).join(Lesson).filter(Lesson.course_id == course_id).count()
+
+    if total_lessons > 0 and completed_lessons < total_lessons:
+        flash(f"You must complete all lessons before taking the quiz. ({completed_lessons}/{total_lessons} completed)", "warning")
+        return redirect(url_for("courses.get_course", id=course_id))
+    
+
     if request.method == "POST":
 
         quiz_attempt = QuizAttempt(user_id=current_user.id, quiz_id=quiz.id, score=0, passed=False)
@@ -128,3 +140,16 @@ def results(course_id):
         abort(404)
 
     return render_template("quiz/results.html", quiz=quiz, attempt=attempt)
+
+@quiz_bp.route("/<int:course_id>/quiz/history", methods=["GET"])
+@login_required
+def quiz_history(course_id):
+    quiz = Quiz.query.filter_by(course_id=course_id).first()
+    if quiz is None:
+        abort(404)
+
+    attempts = QuizAttempt.query.filter_by(
+        user_id=current_user.id, quiz_id=quiz.id
+    ).order_by(QuizAttempt.attempted_at.desc()).all()
+
+    return render_template("quiz/quiz_history.html", quiz=quiz, attempts=attempts)

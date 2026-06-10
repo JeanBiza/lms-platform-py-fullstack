@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz History — LMS Platform{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2>Quiz History</h2>
+                <p class="text-muted mb-0">{{ quiz.course.title }}</p>
+            </div>
+            <a href="{{ url_for('quiz.take_quiz', course_id=quiz.course_id) }}"
+               class="btn btn-primary btn-sm">Try Again</a>
+        </div>
+
+        {% if attempts %}
+        <div class="d-flex flex-column gap-3">
+            {% for attempt in attempts %}
+            <div class="card shadow-sm">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="fw-semibold">
+                            Attempt #{{ loop.revindex }}
+                        </div>
+                        <small class="text-muted">
+                            {{ attempt.attempted_at.strftime('%b %d, %Y — %H:%M') }}
+                        </small>
+                    </div>
+                    <div class="text-center mx-3">
+                        <div class="fs-4 fw-bold
+                            {% if attempt.passed %}text-success{% else %}text-danger{% endif %}">
+                            {{ attempt.score }}%
+                        </div>
+                        <small class="text-muted">Passing: {{ quiz.passing_score }}%</small>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge {% if attempt.passed %}bg-success{% else %}bg-danger{% endif %}">
+                            {% if attempt.passed %}Passed{% else %}Failed{% endif %}
+                        </span>
+                        <a href="{{ url_for('quiz.results', course_id=quiz.course_id) }}"
+                           class="btn btn-sm btn-outline-secondary">View</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-light border text-center py-4">
+            <p class="text-muted mb-0">No attempts yet.</p>
+        </div>
+        {% endif %}
+
+        <div class="mt-4">
+            <a href="{{ url_for('courses.get_course', id=quiz.course_id) }}"
+               class="btn btn-outline-secondary">← Back to Course</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
