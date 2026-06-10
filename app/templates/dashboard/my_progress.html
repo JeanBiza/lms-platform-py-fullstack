@@ -20,7 +20,7 @@
                         {{ item.enrollment.status | replace('_', ' ') | title }}
                     </span>
                 </div>
-
+                
                 <p class="text-muted small mb-3">{{ item.course.category }}</p>
 
                 <div class="mb-1 d-flex justify-content-between">
@@ -40,10 +40,16 @@
 
                 <div class="d-flex justify-content-between align-items-center">
                     <small class="text-muted">Enrolled {{ item.enrollment.enrolled_at.strftime('%b %d, %Y') }}</small>
-                    <a href="{{ url_for('courses.get_course', id=item.course.id) }}" 
-                       class="btn btn-sm btn-outline-primary">
-                        {% if item.percent == 100 %}Review{% else %}Continue{% endif %}
-                    </a>
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('courses.get_course', id=item.course.id) }}" 
+                        class="btn btn-sm btn-outline-primary">
+                            {% if item.percent == 100 %}Review{% else %}Continue{% endif %}
+                        </a>
+                        {% if item.enrollment.status == "completed" %}
+                        <a href="{{ url_for('employee.download_certificate', course_id=item.course.id) }}"
+                        class="btn btn-sm btn-success">Certificate</a>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>

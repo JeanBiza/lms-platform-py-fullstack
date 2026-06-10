@@ -1,5 +1,6 @@
+from flask import send_file
+from app.services.certificate_service import generate_certificate
 import datetime
-
 from flask import Blueprint, abort, render_template, redirect, url_for
 from flask_login import login_required, current_user
 from app.models.course import Course
@@ -100,3 +101,25 @@ def view_lesson(lesson_id):
     ).first() is not None
 
     return render_template("dashboard/lesson.html", lesson=lesson, already_completed=already_completed)
+
+@employee_bp.route("/courses/<int:course_id>/certificate")
+@login_required
+def download_certificate(course_id):
+    enrollment = Enrollment.query.filter_by(
+        user_id=current_user.id, course_id=course_id
+    ).first()
+
+    if not enrollment or enrollment.status != "completed":
+        abort(403)
+
+    course = db.session.get(Course, course_id)
+    date = enrollment.completed_at.strftime("%B %d, %Y") if enrollment.completed_at else datetime.date.today().strftime("%B %d, %Y")
+
+    buffer = generate_certificate(current_user.name, course.title, date)
+
+    return send_file(
+        buffer,
+        mimetype="application/pdf",
+        as_attachment=True,
+        download_name=f"certificate_{course.title.replace(' ', '_')}.pdf"
+    )
